@@ -1,11 +1,12 @@
-export type OrderStatus = "PENDIENTE" | "CANCELADA" | "RESERVA" | "ANTICIPO";
+export type OrderStatus = "PENDIENTE" | "PAGADA" | "RESERVA" | "ANTICIPO" ;
 export type Order = {
   id: string;
-  clientId: string; // relación con cliente
+  customerId: string; // relación con cliente
   items: OrderItem[]; // lista de items
   payments: Payment[]; // lista de abonos
   orderStatus: OrderStatus;
-  createdAt: string;
+  compromisedDate?: string; // fecha comprometida de la completación de la orden
+  createdAt: Date;
   comments?: string;
 };
 
@@ -18,7 +19,7 @@ export type Payment = {
   method: PaymentMethod;
   paidAt: string; // fecha del pago
   comments?: string; // opcional (ej: "abono 1", "segunda cuota", etc)
-  createdAt: string;
+  createdAt: Date;
 };
 
 export type OrderItem = {
