@@ -1,6 +1,7 @@
 import { adminDb } from "@/lib/firebase-admin";
 
 import type { Order, OrderStatus, OrderItem } from "../types/order";
+import { inventoryService } from "./inventoryService";
 
 export const orderService = {
   // CREATE ORDER
@@ -22,6 +23,14 @@ export const orderService = {
     };
 
     await ref.set(order);
+    for (const item of input.items) {
+      await inventoryService.registerMovement({
+        plantId: item.plantId,
+        type: "OUT",
+        quantity: item.quantity,
+        orderId: ref.id,
+      });
+    }
 
     return ref.id;
   },

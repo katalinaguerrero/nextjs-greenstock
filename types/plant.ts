@@ -5,12 +5,14 @@ export type Plant = {
   id: string;
   shortId: string;
   name: string;
-  minHeight: string;
-  maxHeight: string;
+  heightRangeCm: {
+    min: number;
+    max: number;
+  };
   category: PlantType;
-  age: number;
+  plantationYear: number;
   priceWholesale: number; // precio neto mayorista
   priceWithIVA: number; // precio con IVA
   priceRetail: number; // precio al detalle
   comments?: string;
-}
+};
