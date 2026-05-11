@@ -3,7 +3,6 @@ export type PlantType = "NATIVO" | "EXOTICO";
 
 export type Plant = {
   id: string;
-  shortId: string;
   name: string;
   heightRangeCm: {
     min: number;
@@ -11,8 +10,10 @@ export type Plant = {
   };
   category: PlantType;
   plantationYear: number;
-  priceWholesale: number; // precio neto mayorista
-  priceWithIVA: number; // precio con IVA
-  priceRetail: number; // precio al detalle
+  prices: {
+    wholesale: number; // precio neto mayorista
+    retail: number; // precio al detalle
+    withIVA: number; // precio con IVA
+  };
   comments?: string;
 };

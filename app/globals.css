@@ -30,6 +30,6 @@
 }
 
 body {
-  background: var(--color-background);
-  color: var(--color-foreground);
+  /* background: var(--color-background); */
+  color:#000;
 }

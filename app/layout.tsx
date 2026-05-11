@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { Noto_Sans_Ol_Chiki } from "next/font/google";
+import { Space_Mono } from "next/font/google";
 import "./globals.css";
 
-const noto = Noto_Sans_Ol_Chiki({
+const space_mono = Space_Mono({
   subsets: ["latin"],
   weight: "400",
 });
@@ -22,8 +22,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${noto.className} `}>
-      <body >{children}</body>
+    <html lang="en" className={`${space_mono.className} `}>
+      <body>
+
+         <main className="flex-1 p-6">{children}</main>
+      </body>
     </html>
   );
 }
