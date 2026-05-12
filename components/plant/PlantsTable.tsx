@@ -1,4 +1,3 @@
-
 "use client";
 
 import {
@@ -9,6 +8,7 @@ import {
   TableHead,
   TableCell,
 } from "@/components/ui/Table";
+import { getPlantAge } from "@/lib/utils";
 import type { Plant } from "@/types/plant";
 import { useRouter } from "next/navigation";
 
@@ -27,7 +27,7 @@ export default function PlantsTable({ plants }: Props) {
           <TableHead>Nombre</TableHead>
           <TableHead>Categoría</TableHead>
           <TableHead>Altura (cm)</TableHead>
-          <TableHead>Año plantación</TableHead>
+          <TableHead>Edad</TableHead>
           <TableHead>Precio retail</TableHead>
         </TableRow>
       </TableHeader>
@@ -47,7 +47,7 @@ export default function PlantsTable({ plants }: Props) {
               {plant.heightRangeCm.min} - {plant.heightRangeCm.max}
             </TableCell>
 
-            <TableCell>{plant.plantationYear}</TableCell>
+            <TableCell> {getPlantAge(plant.plantationYear)} años</TableCell>
 
             <TableCell>${plant.prices.retail.toLocaleString()}</TableCell>
           </TableRow>
