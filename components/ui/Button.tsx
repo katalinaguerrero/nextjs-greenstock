@@ -1,16 +1,22 @@
 import { cn } from "@/lib/utils";
+import { Spinner } from "./Spinner";
 
 type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: "primary" | "danger" | "ghost";
+  loading?: boolean;
 };
 
 export function Button({
   className,
   variant = "primary",
+  loading = false,
+  disabled,
+  children,
   ...props
 }: ButtonProps) {
   return (
     <button
+      disabled={loading || disabled}
       className={cn(
         "px-4 py-2 rounded-md text-sm transition duration-200",
 
@@ -27,14 +33,21 @@ export function Button({
         variant === "ghost" &&
           "bg-transparent text-primary border border-primary hover:bg-green-300",
 
-        // 🌿 interacción mejorada (no pierdes shadow, solo animas)
+        // 🌿 interacción
         "hover:translate-x-[1px] hover:translate-y-[1px]",
-
         "focus:outline-none focus:ring-2 focus:ring-primary-light",
+
+        // 🚫 disabled state (IMPORTANTE para UX)
+        (loading || disabled) && "opacity-60 cursor-not-allowed",
 
         className
       )}
       {...props}
-    />
+    >
+      <span className="flex items-center justify-center gap-2">
+        {loading && <Spinner />}
+        {children}
+      </span>
+    </button>
   );
 }

@@ -14,28 +14,60 @@ type Props = {
   loading?: boolean;
 };
 
-export default function PlantsForm({ initialData, onSubmit, loading }: Props) {
-  const [name, setName] = useState(initialData?.name ?? "");
-  const [category, setCategory] = useState<PlantType>(
-    initialData?.category ?? "NATIVO"
-  );
+export default function PlantsForm({
+  initialData,
+  onSubmit,
+  loading,
+}: Props) {
+  const emptyState = {
+    name: "",
+    category: "NATIVO" as PlantType,
+    minHeight: 0,
+    maxHeight: 0,
+    year: 0,
+    wholesale: 0,
+    retail: 0,
+    iva: 0,
+    comments: "",
+  };
 
+  const [name, setName] = useState(initialData?.name ?? emptyState.name);
+  const [category, setCategory] = useState<PlantType>(
+    initialData?.category ?? emptyState.category
+  );
   const [minHeight, setMinHeight] = useState(
-    initialData?.heightRangeCm.min ?? 0
+    initialData?.heightRangeCm.min ?? emptyState.minHeight
   );
   const [maxHeight, setMaxHeight] = useState(
-    initialData?.heightRangeCm.max ?? 0
+    initialData?.heightRangeCm.max ?? emptyState.maxHeight
   );
-
-  const [year, setYear] = useState(initialData?.plantationYear ?? 0);
-
+  const [year, setYear] = useState(
+    initialData?.plantationYear ?? emptyState.year
+  );
   const [wholesale, setWholesale] = useState(
-    initialData?.prices.wholesale ?? 0
+    initialData?.prices.wholesale ?? emptyState.wholesale
   );
-  const [retail, setRetail] = useState(initialData?.prices.retail ?? 0);
-  const [iva, setIva] = useState(initialData?.prices.withIVA ?? 0);
+  const [retail, setRetail] = useState(
+    initialData?.prices.retail ?? emptyState.retail
+  );
+  const [iva, setIva] = useState(
+    initialData?.prices.withIVA ?? emptyState.iva
+  );
+  const [comments, setComments] = useState(
+    initialData?.comments ?? emptyState.comments
+  );
 
-  const [comments, setComments] = useState(initialData?.comments ?? "");
+  function resetForm() {
+    setName(emptyState.name);
+    setCategory(emptyState.category);
+    setMinHeight(emptyState.minHeight);
+    setMaxHeight(emptyState.maxHeight);
+    setYear(emptyState.year);
+    setWholesale(emptyState.wholesale);
+    setRetail(emptyState.retail);
+    setIva(emptyState.iva);
+    setComments(emptyState.comments);
+  }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -55,13 +87,18 @@ export default function PlantsForm({ initialData, onSubmit, loading }: Props) {
       },
       comments: comments || undefined,
     });
+
+    // 👉 SOLO reset si es creación
+    if (!initialData) {
+      resetForm();
+    }
   }
 
   return (
-   <form
-  onSubmit={handleSubmit}
-  className="space-y-4 border rounded-xl p-6 bg-[#dde7c7]"
->
+    <form
+      onSubmit={handleSubmit}
+      className="space-y-4 border rounded-xl p-6 bg-[#dde7c7]"
+    >
       <div>
         <label className="text-sm">Nombre</label>
         <Input
@@ -70,6 +107,7 @@ export default function PlantsForm({ initialData, onSubmit, loading }: Props) {
           onChange={(e) => setName(e.target.value)}
         />
       </div>
+
       <div>
         <label className="text-sm">Categoría</label>
         <Select
@@ -78,6 +116,7 @@ export default function PlantsForm({ initialData, onSubmit, loading }: Props) {
           options={plantTypeOptions}
         />
       </div>
+
       <div>
         <label className="text-sm">Altura (cm)</label>
 
@@ -86,7 +125,6 @@ export default function PlantsForm({ initialData, onSubmit, loading }: Props) {
             <label className="text-xs">Min</label>
             <Input
               type="number"
-              placeholder="Min"
               value={minHeight}
               onChange={(e) => setMinHeight(Number(e.target.value))}
             />
@@ -96,7 +134,6 @@ export default function PlantsForm({ initialData, onSubmit, loading }: Props) {
             <label className="text-xs">Max</label>
             <Input
               type="number"
-              placeholder="Max"
               value={maxHeight}
               onChange={(e) => setMaxHeight(Number(e.target.value))}
             />
@@ -121,25 +158,24 @@ export default function PlantsForm({ initialData, onSubmit, loading }: Props) {
             <label className="text-xs">Mayorista</label>
             <Input
               type="number"
-              placeholder="Mayorista"
               value={wholesale}
               onChange={(e) => setWholesale(Number(e.target.value))}
             />
           </div>
+
           <div className="flex flex-col w-full">
             <label className="text-xs">Al Detalle</label>
             <Input
               type="number"
-              placeholder="Retail"
               value={retail}
               onChange={(e) => setRetail(Number(e.target.value))}
             />
           </div>
+
           <div className="flex flex-col w-full">
             <label className="text-xs">Con IVA</label>
             <Input
               type="number"
-              placeholder="IVA"
               value={iva}
               onChange={(e) => setIva(Number(e.target.value))}
             />
@@ -149,11 +185,18 @@ export default function PlantsForm({ initialData, onSubmit, loading }: Props) {
 
       <div>
         <label className="text-sm">Comentarios</label>
-        <Input value={comments} onChange={(e) => setComments(e.target.value)} />
+        <Input
+          value={comments}
+          onChange={(e) => setComments(e.target.value)}
+        />
       </div>
 
-      <Button type="submit" disabled={loading}>
-        {loading ? "Guardando..." : initialData ? "Actualizar" : "Crear planta"}
+      <Button type="submit" loading={loading}>
+        {loading
+          ? "Guardando..."
+          : initialData
+          ? "Actualizar planta"
+          : "Crear planta"}
       </Button>
     </form>
   );

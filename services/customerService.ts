@@ -1,4 +1,3 @@
-
 import { adminDb } from "@/lib/firebase-admin";
 import type { Customer } from "@/types/customer";
 
@@ -17,24 +16,42 @@ export const customerService = {
   },
 
   async getCustomer(id: string): Promise<Customer | null> {
+    if (!id || typeof id !== "string") {
+      throw new Error("getCustomer: id is required and must be a string");
+    }
+
     const snap = await adminDb.collection("customers").doc(id).get();
 
     if (!snap.exists) return null;
 
-    return snap.data() as Customer;
+    return {
+      id: snap.id,
+      ...snap.data(),
+    } as Customer;
   },
 
   async getCustomers(): Promise<Customer[]> {
     const snap = await adminDb.collection("customers").get();
 
-    return snap.docs.map((d) => d.data() as Customer);
+    return snap.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    })) as Customer[];
   },
 
   async updateCustomer(id: string, data: Partial<Customer>) {
+    if (!id || typeof id !== "string") {
+      throw new Error("updateCustomer: id is required");
+    }
+
     await adminDb.collection("customers").doc(id).update(data);
   },
 
   async deleteCustomer(id: string) {
+    if (!id || typeof id !== "string") {
+      throw new Error("deleteCustomer: id is required");
+    }
+
     await adminDb.collection("customers").doc(id).delete();
   },
 };

@@ -1,16 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import type { Plant } from "@/types/plant";
 import PlantsForm from "@/components/plant/PlantsForm";
-import { useRouter } from "next/navigation";
 
-export default function EditPlantClient({
-  plant,
-  onUpdate,
+export default function NewPlantClient({
+  onCreate,
 }: {
-  plant: Plant;
-  onUpdate: (data: Omit<Plant, "id">) => Promise<void>;
+  onCreate: (data: Omit<Plant, "id">) => Promise<void>;
 }) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
@@ -19,18 +17,12 @@ export default function EditPlantClient({
     setLoading(true);
 
     try {
-      await onUpdate(data);
+      await onCreate(data);
       router.push("/plants");
     } finally {
       setLoading(false);
     }
   };
 
-  return (
-    <PlantsForm
-      initialData={plant}
-      onSubmit={handleSubmit}
-      loading={loading}
-    />
-  );
+  return <PlantsForm onSubmit={handleSubmit} loading={loading} />;
 }
