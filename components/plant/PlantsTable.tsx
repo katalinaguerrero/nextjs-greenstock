@@ -1,16 +1,10 @@
 "use client";
 
-import {
-  Table,
-  TableHeader,
-  TableBody,
-  TableRow,
-  TableHead,
-  TableCell,
-} from "@/components/ui/Table";
-import { getPlantAge } from "@/lib/utils";
-import type { Plant } from "@/types/plant";
 import { useRouter } from "next/navigation";
+
+import { DataTable } from "@/components/table/DataTable";
+import type { Plant } from "@/types/plant";
+import { getPlantAge } from "@/lib/utils";
 
 type Props = {
   plants: Plant[];
@@ -18,41 +12,39 @@ type Props = {
 
 export default function PlantsTable({ plants }: Props) {
   const router = useRouter();
-  if (!plants.length) return <p>No hay plantas registradas.</p>;
 
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>Nombre</TableHead>
-          <TableHead>Categoría</TableHead>
-          <TableHead>Altura (cm)</TableHead>
-          <TableHead>Edad</TableHead>
-          <TableHead>Precio retail</TableHead>
-        </TableRow>
-      </TableHeader>
-
-      <TableBody>
-        {plants.map((plant) => (
-          <TableRow
-            key={plant.id}
-            onClick={() => router.push(`/plants/${plant.id}/edit`)}
-            className="cursor-pointer hover:bg-green-50 transition"
-          >
-            <TableCell>{plant.name}</TableCell>
-
-            <TableCell>{plant.category}</TableCell>
-
-            <TableCell>
-              {plant.heightRangeCm.min} - {plant.heightRangeCm.max}
-            </TableCell>
-
-            <TableCell> {getPlantAge(plant.plantationYear)} años</TableCell>
-
-            <TableCell>${plant.prices.retail.toLocaleString()}</TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+    <DataTable
+      data={plants}
+      emptyMessage="No hay plantas registradas."
+      onRowClick={(plant) =>
+        router.push(`/plants/${plant.id}/edit`)
+      }
+      columns={[
+        {
+          header: "Nombre",
+          render: (plant) => plant.name,
+        },
+        {
+          header: "Categoría",
+          render: (plant) => plant.category,
+        },
+        {
+          header: "Altura (cm)",
+          render: (plant) =>
+            `${plant.heightRangeCm.min} - ${plant.heightRangeCm.max}`,
+        },
+        {
+          header: "Edad",
+          render: (plant) =>
+            getPlantAge(plant.plantationYear),
+        },
+        {
+          header: "Precio",
+          render: (plant) =>
+            `$${plant.prices.retail.toLocaleString("es-CL")}`,
+        },
+      ]}
+    />
   );
 }
