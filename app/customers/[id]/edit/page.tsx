@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { customerService } from "@/services/customerService";
-import EditCustomerClient from "./EditCustomerClient";
+import CustomersForm from "@/components/customer/CustomersForm";
+import { EditEntity } from "@/components/crud/EditEntity";
 import { Title } from "@/components/ui/Title";
 import type { Customer } from "@/types/customer";
 
@@ -11,13 +12,11 @@ export default async function Page({
 }) {
   const { id } = await params;
 
-  if (!id) notFound();
-
   const customer = await customerService.getCustomer(id);
 
   if (!customer) notFound();
 
-  async function updateCustomer(data: Omit<Customer, "id">) {
+  async function handleUpdate(data: Omit<Customer, "id">) {
     "use server";
     await customerService.updateCustomer(id, data);
   }
@@ -25,7 +24,13 @@ export default async function Page({
   return (
     <>
       <Title>Editar Cliente</Title>
-      <EditCustomerClient customer={customer} onUpdate={updateCustomer} />
+
+      <EditEntity<Omit<Customer, "id">, Customer>
+        initialData={customer}
+        Form={CustomersForm}
+        onUpdate={handleUpdate}
+        redirectTo="/customers"
+      />
     </>
   );
 }

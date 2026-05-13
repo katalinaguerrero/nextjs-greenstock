@@ -1,7 +1,8 @@
 import { customerService } from "@/services/customerService";
-import { Title } from "@/components/ui/Title";
-import NewCustomerClient from "./NewCustomerClient";
 import type { Customer } from "@/types/customer";
+import CustomersForm from "@/components/customer/CustomersForm";
+import { CreateEntity } from "@/components/crud/CreateEntity";
+import { Title } from "@/components/ui/Title";
 
 export default function NewCustomerPage() {
   async function handleCreate(data: Omit<Customer, "id">) {
@@ -10,10 +11,14 @@ export default function NewCustomerPage() {
   }
 
   return (
-    <div>
-      <Title>Agregar Cliente Nuevo</Title>
+    <>
+      <Title>Agregar Cliente</Title>
 
-      <NewCustomerClient onCreate={handleCreate} />
-    </div>
+      <CreateEntity
+        Form={CustomersForm}
+        onCreate={handleCreate}
+        redirectTo="/customers"
+      />
+    </>
   );
 }

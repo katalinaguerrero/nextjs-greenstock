@@ -1,6 +1,10 @@
 import { notFound } from "next/navigation";
+
 import { plantService } from "@/services/plantService";
-import EditPlantClient from "./EditPlantClient";
+import type { Plant } from "@/types/plant";
+
+import PlantsForm from "@/components/plant/PlantsForm";
+import { EditEntity } from "@/components/crud/EditEntity";
 import { Title } from "@/components/ui/Title";
 
 export default async function Page(props: {
@@ -14,15 +18,22 @@ export default async function Page(props: {
 
   if (!plant) notFound();
 
-  async function updatePlant(data: Omit<typeof plant, "id">) {
+  async function updatePlant(data: Omit<Plant, "id">) {
     "use server";
+
     await plantService.updatePlant(id, data);
   }
 
   return (
     <>
       <Title>Editar Planta</Title>
-      <EditPlantClient plant={plant} onUpdate={updatePlant} />
+
+      <EditEntity<Omit<Plant, "id">, Plant>
+        initialData={plant}
+        Form={PlantsForm}
+        onUpdate={updatePlant}
+        redirectTo="/plants"
+      />
     </>
   );
 }
