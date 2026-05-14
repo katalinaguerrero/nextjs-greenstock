@@ -9,16 +9,16 @@ import { Button } from "@/components/ui/Button";
 import Select from "@/components/ui/Select";
 
 type Props = {
-  plants: { label: string; value: string }[];
-  sections: { label: string; value: string }[]; // 👈 NUEVO
+  plants?: { label: string; value: string }[];
+  sections?: { label: string; value: string }[]; // 👈 NUEVO
   initialData?: Omit<InventoryMovement, "id" | "createdAt">;
   onSubmit: (data: Omit<InventoryMovement, "id" | "createdAt">) => void;
   loading?: boolean;
 };
 
 export default function InventoryMovementForm({
-  plants,
-  sections,
+  plants = [],
+  sections = [],
   initialData,
   onSubmit,
   loading,

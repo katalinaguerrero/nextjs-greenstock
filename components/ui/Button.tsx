@@ -34,7 +34,7 @@ export function Button({
           "bg-transparent text-primary border border-primary hover:bg-green-300",
 
         // 🌿 interacción
-        "hover:translate-x-[1px] hover:translate-y-[1px]",
+        "hover:translate-x-px hover:translate-y-px",
         "focus:outline-none focus:ring-2 focus:ring-primary-light",
 
         // 🚫 disabled state (IMPORTANTE para UX)

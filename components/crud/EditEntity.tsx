@@ -3,21 +3,21 @@
 import { useRouter } from "next/navigation";
 import { useMutation } from "@/hooks/useMutation";
 
-type Props<TForm, TEntity> = {
+type Props<TForm extends object, TEntity extends object> = {
   initialData: TEntity;
 
   Form: React.ComponentType<{
     initialData?: TEntity;
     onSubmit: (data: TForm) => void;
     loading?: boolean;
-  } & Record<string, any>>;
+  } & Record<string, unknown>>;
 
   onUpdate: (data: TForm) => Promise<void>;
   redirectTo: string;
-  formProps?: Record<string, any>;
+  formProps?: Record<string, unknown>;
 };
 
-export function EditEntity<TForm, TEntity>({
+export function EditEntity<TForm extends object, TEntity extends object>({
   initialData,
   Form,
   onUpdate,
