@@ -67,6 +67,7 @@ export const inventoryService = {
       createdAt: data?.createdAt?.toDate?.().toISOString() ?? null,
     };
   },
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   async updateMovement(id: string, input: any) {
   if (!id || typeof id !== "string") {
     throw new Error("Invalid movement id");

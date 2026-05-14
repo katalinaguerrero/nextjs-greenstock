@@ -29,6 +29,7 @@ export const orderService = {
         type: "OUT",
         quantity: item.quantity,
         orderId: ref.id,
+        sectionId: ""
       });
     }
 
