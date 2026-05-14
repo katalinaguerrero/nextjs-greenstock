@@ -10,11 +10,11 @@ type Props<TForm, TEntity> = {
     initialData?: TEntity;
     onSubmit: (data: TForm) => void;
     loading?: boolean;
-  }>;
+  } & Record<string, any>>;
 
   onUpdate: (data: TForm) => Promise<void>;
-
   redirectTo: string;
+  formProps?: Record<string, any>;
 };
 
 export function EditEntity<TForm, TEntity>({
@@ -22,6 +22,7 @@ export function EditEntity<TForm, TEntity>({
   Form,
   onUpdate,
   redirectTo,
+  formProps,
 }: Props<TForm, TEntity>) {
   const router = useRouter();
 
@@ -37,6 +38,7 @@ export function EditEntity<TForm, TEntity>({
       initialData={initialData}
       onSubmit={handleSubmit}
       loading={loading}
+      {...formProps}
     />
   );
 }

@@ -1,22 +1,27 @@
+/* eslint-disable @typescript-eslint/no-empty-object-type */
 "use client";
 
 import { useRouter } from "next/navigation";
 import { useMutation } from "@/hooks/useMutation";
 
-type Props<T> = {
-  Form: React.ComponentType<{
-    onSubmit: (data: T) => void;
-    loading?: boolean;
-  }>;
-  onCreate: (data: T) => Promise<void>;
-  redirectTo: string;
+type BaseFormProps<T> = {
+  onSubmit: (data: T) => void;
+  loading?: boolean;
 };
 
-export function CreateEntity<T>({
+type Props<T, P = Record<string, never>> = {
+  Form: React.ComponentType<BaseFormProps<T> & P>;
+  onCreate: (data: T) => Promise<void>;
+  redirectTo: string;
+  formProps?: P;
+};
+
+export function CreateEntity<T, P = {}>({
   Form,
   onCreate,
   redirectTo,
-}: Props<T>) {
+  formProps,
+}: Props<T, P>) {
   const router = useRouter();
 
   const { mutate, loading } = useMutation(onCreate);
@@ -26,5 +31,11 @@ export function CreateEntity<T>({
     router.push(redirectTo);
   };
 
-  return <Form onSubmit={handleSubmit} loading={loading} />;
+  return (
+    <Form
+      {...(formProps as P)}
+      onSubmit={handleSubmit}
+      loading={loading}
+    />
+  );
 }

@@ -19,6 +19,9 @@ export default function Navbar() {
         <Link href="/customers" className="hover:underline">
           Clientes
         </Link>
+        <Link href="/inventory" className="hover:underline">
+          Inventario
+        </Link>
       </div>
     </nav>
   );

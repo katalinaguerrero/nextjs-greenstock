@@ -14,15 +14,13 @@ export const plantConfig: EntityConfig<Plant> = {
     },
     {
       label: "Altura",
-      render: (p) =>
-        `${p.heightRangeCm.min} - ${p.heightRangeCm.max}`,
+      render: (p) => `${p.heightRangeCm.min} - ${p.heightRangeCm.max}`,
     },
     {
       label: "Edad",
-      render: (p) =>
-        `${new Date().getFullYear() - p.plantationYear} años`,
+      render: (p) => `${new Date().getFullYear() - p.plantationYear} años`,
     },
-     {
+    {
       label: "Precio x Mayor",
       render: (p) => `$${p.prices.wholesale}`,
     },
@@ -34,7 +32,7 @@ export const plantConfig: EntityConfig<Plant> = {
       label: "Precio con IVA",
       render: (p) => `$${p.prices.withIVA}`,
     },
-     {
+    {
       label: "Comentarios",
       render: (p) => `${p.comments}`,
     },
