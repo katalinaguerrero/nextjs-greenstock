@@ -33,7 +33,7 @@ export default function InventoryTable({
       data={movements}
       emptyMessage="No hay movimientos de inventario."
       onRowClick={(m) =>
-        router.push(`/inventory/${m.id}`)
+        router.push(`/inventory/${m.id}/edit`)
       }
       columns={[
         {
