@@ -33,7 +33,7 @@ export const plantService = {
   },
 
   async getPlants(): Promise<Plant[]> {
-    const snap = await adminDb.collection("plants").get();
+    const snap = await adminDb.collection("plants").orderBy("name","asc").get();
 
     return snap.docs.map((doc) => ({
       id: doc.id,
