@@ -82,8 +82,7 @@ export const inventoryService = {
   // SECTIONS
   // =========================
   async getAllSections() {
-    const snapshot = await adminDb.collection("sections").get();
-
+    const snapshot = await adminDb.collection("sections").orderBy("name", "asc").get();
     return snapshot.docs.map((doc) => {
       const data = doc.data();
 
