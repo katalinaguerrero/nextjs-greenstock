@@ -6,6 +6,7 @@ import { DataTable } from "@/components/table/DataTable";
 import type { InventoryMovement } from "@/types/inventory";
 import type { Plant } from "@/types/plant";
 import type { Section } from "@/types/inventory";
+import { getPlantAge } from "@/lib/utils";
 
 type Props = {
   movements: InventoryMovement[];
@@ -24,6 +25,10 @@ export default function InventoryTable({
     plants.map((p) => [p.id, p.name])
   );
 
+  const plantDetailsMap = Object.fromEntries(
+    plants.map((p) => [p.id, p])
+  );
+
   const sectionMap = Object.fromEntries(
     sections.map((s) => [s.id, s.name])
   );
@@ -39,6 +44,22 @@ export default function InventoryTable({
         {
           header: "Planta",
           render: (m) => plantMap[m.plantId] ?? "—",
+        },
+        {
+          header: "Año plantación",
+          render: (m) => {
+            const plant = plantDetailsMap[m.plantId];
+            return plant?.plantationYear ? getPlantAge(plant.plantationYear) : "—";
+          },
+        },
+        {
+          header: "Tamaño",
+          render: (m) => {
+            const plant = plantDetailsMap[m.plantId];
+            return plant
+              ? `${plant.heightRangeCm.min}-${plant.heightRangeCm.max} cm`
+              : "—";
+          },
         },
         {
           header: "Tipo",
