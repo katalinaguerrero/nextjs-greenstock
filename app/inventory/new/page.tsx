@@ -6,7 +6,7 @@ import InventoryForm from "@/components/inventory/InventoryForm";
 import { CreateEntity } from "@/components/crud/CreateEntity";
 import { Title } from "@/components/ui/Title";
 import { plantService } from "@/services/plantService";
-import { getPlantAge } from "@/lib/utils";
+import { getPlantLabel } from "@/lib/utils";
 export default async function NewInventoryMovementPage() {
   async function handleCreate(
     data: Omit<InventoryMovement, "id" | "createdAt">
@@ -25,7 +25,7 @@ export default async function NewInventoryMovementPage() {
   }));
 
   const plants = plantsRaw.map((plant) => ({
-    label: `${plant.name} | ${getPlantAge(plant.plantationYear)} años ${plant.heightRangeCm.min}cm - ${plant.heightRangeCm.max}cm`,
+    label: getPlantLabel(plant),
     value: plant.id,
   }));
 
