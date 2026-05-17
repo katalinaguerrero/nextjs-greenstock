@@ -158,7 +158,6 @@ export default function OrderForm({
       resetForm();
     }
   }
-  console.log(plants)
   const plantLabel = (plantId: string) => {
     return plants.find((p) => p.value === plantId)?.label ?? plantId;
   };

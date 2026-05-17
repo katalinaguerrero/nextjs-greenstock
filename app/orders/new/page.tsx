@@ -7,7 +7,7 @@ import { Title } from "@/components/ui/Title";
 import { plantService } from "@/services/plantService";
 import { customerService } from "@/services/customerService";
 import OrderForm from "@/components/order/OrderForm";
-import { getPlantLabel } from "@/lib/utils";
+import { getCustomerLabel, getPlantLabel } from "@/lib/utils";
 
 export default async function NewOrderPage() {
   async function handleCreate(data: {
@@ -29,7 +29,7 @@ const plants = plantsRaw.map((plant) => ({
 }));
 
   const customers = customersRaw.map((customer) => ({
-    label: customer.name,
+    label: getCustomerLabel(customer),
     value: customer.id,
   }));
 
