@@ -49,7 +49,6 @@ export const inventoryService = {
     });
   },
   async getMovementById(id: string) {
-    console.log(id);
     const doc = await adminDb.collection("inventoryMovements").doc(id).get();
 
     if (!doc.exists) return null;

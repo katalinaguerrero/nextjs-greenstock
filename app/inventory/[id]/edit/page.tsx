@@ -14,7 +14,6 @@ export default async function Page(props: {
   const { id } = await props.params;
 
   if (!id) notFound();
-  console.log(id);
   const movement = await inventoryService.getMovementById(id);
 
   if (!movement) notFound();
@@ -29,8 +28,6 @@ export default async function Page(props: {
 
   const plantsRaw = await plantService.getPlants();
   const sectionsRaw = await inventoryService.getAllSections();
-  console.log(plantsRaw)
-  console.log(sectionsRaw)
   const sections = sectionsRaw.map((s) => ({
     label: s.name,
     value: s.id,

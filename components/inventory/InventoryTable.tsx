@@ -46,7 +46,7 @@ export default function InventoryTable({
           render: (m) => plantMap[m.plantId] ?? "—",
         },
         {
-          header: "Año plantación",
+          header: "Edad",
           render: (m) => {
             const plant = plantDetailsMap[m.plantId];
             return plant?.plantationYear ? getPlantAge(plant.plantationYear) : "—";
