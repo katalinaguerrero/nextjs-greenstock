@@ -23,10 +23,11 @@ export default async function NewOrderPage() {
   const plantsRaw = await plantService.getPlants();
   const customersRaw = await customerService.getCustomers();
 
-const plants = plantsRaw.map((plant) => ({
-  label: getPlantLabel(plant),
-  value: plant.id,
-}));
+  const plants = plantsRaw.map((plant) => ({
+    label: getPlantLabel(plant),
+    value: plant.id,
+    price: plant.prices.retail
+  }));
 
   const customers = customersRaw.map((customer) => ({
     label: getCustomerLabel(customer),

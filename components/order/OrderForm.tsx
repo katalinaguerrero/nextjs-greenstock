@@ -9,7 +9,7 @@ import Select from "../ui/Select";
 
 type Props = {
   customers?: { label: string; value: string }[];
-  plants?: { label: string; value: string }[];
+  plants?: { label: string; value: string; price?: number }[];
   initialData?: Order;
   onSubmit: (data: Order) => void;
   loading?: boolean;
@@ -58,6 +58,7 @@ export default function OrderForm({
   const [newPaymentMethod, setNewPaymentMethod] = useState<PaymentMethod>("EFECTIVO");
   const [newPaymentDate, setNewPaymentDate] = useState("");
   const [newPaymentComments, setNewPaymentComments] = useState("");
+  const [isCustomerModalOpen, setIsCustomerModalOpen] = useState(false);
 
   function resetForm() {
     setCustomerId("");
@@ -158,13 +159,34 @@ export default function OrderForm({
       resetForm();
     }
   }
+
+  function openCustomerModal() {
+    if (!customerId) return;
+    setIsCustomerModalOpen(true);
+  }
+
+  function closeCustomerModal() {
+    setIsCustomerModalOpen(false);
+  }
+
+  function handlePlantChange(value: string) {
+    setNewItemPlantId(value);
+    const selectedPlant = plants.find((plant) => plant.value === value);
+
+    if (selectedPlant?.price != null) {
+      setNewItemPrice(selectedPlant.price);
+    }
+  }
+
+  const selectedPlant = plants.find((plant) => plant.value === newItemPlantId);
+
   const plantLabel = (plantId: string) => {
     return plants.find((p) => p.value === plantId)?.label ?? plantId;
   };
 
   const totalOrdered = items.reduce((sum, item) => sum + item.quantity * item.price, 0);
   const totalPaid = payments.reduce((sum, payment) => sum + payment.amount, 0);
-
+console.log(plants)
   return (
     <form
       onSubmit={handleSubmit}
@@ -176,11 +198,23 @@ export default function OrderForm({
         <div className="space-y-4">
           <div>
             <label className="text-sm">Cliente *</label>
-            <Select
-              value={customerId}
-              onChange={setCustomerId}
-              options={customers}
-            />
+            <div className="flex gap-2 items-end">
+              <div className="flex-1">
+                <Select
+                  value={customerId}
+                  onChange={setCustomerId}
+                  options={customers}
+                />
+              </div>
+              <button
+                type="button"
+                disabled={!customerId}
+                onClick={openCustomerModal}
+                className="rounded border border-black bg-white px-3 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-40"
+              >
+                Ver cliente
+              </button>
+            </div>
           </div>
 
           <div>
@@ -210,6 +244,48 @@ export default function OrderForm({
           </div>
         </div>
       </div>
+
+      {isCustomerModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+          <div className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <h2 className="text-xl font-semibold">Detalle del cliente</h2>
+                <p className="text-sm text-gray-600">ID: {customerId}</p>
+              </div>
+              <button
+                type="button"
+                onClick={closeCustomerModal}
+                className="text-sm text-gray-700 hover:text-black"
+              >
+                Cerrar
+              </button>
+            </div>
+
+            <div className="mt-4 space-y-3 text-sm text-gray-700">
+              <p className="font-semibold">Nombre</p>
+              <p>{customers.find((customer) => customer.value === customerId)?.label || "Cliente desconocido"}</p>
+            </div>
+
+            <div className="mt-6 flex flex-col gap-2 sm:flex-row">
+              <button
+                type="button"
+                onClick={() => window.open(`/customers/${customerId}/edit`, "_blank")}
+                className="rounded bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+              >
+                Editar cliente en nueva pestaña
+              </button>
+              <button
+                type="button"
+                onClick={closeCustomerModal}
+                className="rounded border border-black bg-white px-4 py-2 text-sm font-semibold"
+              >
+                Volver a la orden
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ORDER ITEMS SECTION */}
       <div className="border-b pb-4">
@@ -265,7 +341,7 @@ export default function OrderForm({
               <label className="text-xs">Planta</label>
               <Select
                 value={newItemPlantId}
-                onChange={setNewItemPlantId}
+                onChange={handlePlantChange}
                 options={plants}
               />
             </div>
@@ -287,6 +363,15 @@ export default function OrderForm({
               />
             </div>
           </div>
+          {selectedPlant?.price != null ? (
+            <p className="text-xs text-gray-600">
+              Precio sugerido: ${selectedPlant.price.toFixed(2)} — puedes usar otro precio si lo deseas.
+            </p>
+          ) : (
+            <p className="text-xs text-gray-600">
+              Ingresa el precio manual para este item.
+            </p>
+          )}
           <Button
             type="button"
             onClick={addItem}
