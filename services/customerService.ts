@@ -31,7 +31,7 @@ export const customerService = {
   },
 
   async getCustomers(): Promise<Customer[]> {
-    const snap = await adminDb.collection("customers").get();
+    const snap = await adminDb.collection("customers").orderBy("name").get();
 
     return snap.docs.map((doc) => ({
       id: doc.id,

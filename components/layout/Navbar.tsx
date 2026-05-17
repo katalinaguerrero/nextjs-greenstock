@@ -12,6 +12,9 @@ export default function Navbar() {
 
       {/* Links */}
       <div className="flex gap-4 text-sm">
+        <Link href="/orders" className="hover:underline">
+          Ordenes
+        </Link>
         <Link href="/plants" className="hover:underline">
           Plantas
         </Link>
