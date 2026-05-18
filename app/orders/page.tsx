@@ -16,8 +16,6 @@ export default async function OrdersPage() {
   const customerMap = Object.fromEntries(
     customers.map((customer) => [customer.id, getCustomerLabel(customer)])
   );
-  console.log(orders)
-  console.log(customers)
   return (
     <div className="space-y-6">
       <PageHeader

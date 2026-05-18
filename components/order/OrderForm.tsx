@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import type { Order, OrderStatus, OrderItem, Payment, PaymentMethod } from "@/types/order";
 
 import { Input } from "@/components/ui/Input";
@@ -29,6 +29,20 @@ const paymentMethodOptions = [
   { label: "Tarjeta", value: "TARJETA" },
   { label: "Cheque", value: "CHEQUE" },
 ];
+
+function getTotalOrdered(orderItems: OrderItem[]) {
+  return orderItems.reduce((sum, item) => sum + item.quantity * item.price, 0);
+}
+
+function getTotalPaid(paymentList: Payment[]) {
+  return paymentList.reduce((sum, payment) => sum + payment.amount, 0);
+}
+
+function syncOrderStatus(balance: number, currentStatus: OrderStatus) {
+  if (balance <= 0) return "PAGADA";
+  if (currentStatus === "PAGADA") return "PENDIENTE";
+  return currentStatus;
+}
 
 export default function OrderForm({
   customers = [],
@@ -84,7 +98,7 @@ export default function OrderForm({
     }
 
     const newItem: OrderItem = {
-      id: Math.random().toString(36).substr(2, 9),
+      id: Math.random().toString(36).slice(2, 11),
       plantId: newItemPlantId,
       quantity: newItemQuantity,
       price: newItemPrice,
@@ -93,14 +107,23 @@ export default function OrderForm({
       delivered: false,
     };
 
-    setItems([...items, newItem]);
+    const updatedItems = [...items, newItem];
+    setItems(updatedItems);
+
+    const updatedBalance = getTotalOrdered(updatedItems) - getTotalPaid(payments);
+    setOrderStatus((prevStatus) => syncOrderStatus(updatedBalance, prevStatus));
+
     setNewItemPlantId("");
     setNewItemQuantity(0);
     setNewItemPrice(0);
   }
 
   function removeItem(id: string) {
-    setItems(items.filter((item) => item.id !== id));
+    const updatedItems = items.filter((item) => item.id !== id);
+    setItems(updatedItems);
+
+    const updatedBalance = getTotalOrdered(updatedItems) - getTotalPaid(payments);
+    setOrderStatus((prevStatus) => syncOrderStatus(updatedBalance, prevStatus));
   }
 
   function addPayment() {
@@ -110,7 +133,7 @@ export default function OrderForm({
     }
 
     const newPayment: Payment = {
-      id: Math.random().toString(36).substr(2, 9),
+      id: Math.random().toString(36).slice(2, 11),
       orderId: initialData?.id ?? "new",
       amount: newPaymentAmount,
       method: newPaymentMethod,
@@ -119,7 +142,12 @@ export default function OrderForm({
       createdAt: new Date(),
     };
 
-    setPayments([...payments, newPayment]);
+    const updatedPayments = [...payments, newPayment];
+    setPayments(updatedPayments);
+
+    const updatedBalance = getTotalOrdered(items) - getTotalPaid(updatedPayments);
+    setOrderStatus((prevStatus) => syncOrderStatus(updatedBalance, prevStatus));
+
     setNewPaymentAmount(0);
     setNewPaymentMethod("EFECTIVO");
     setNewPaymentDate("");
@@ -127,10 +155,14 @@ export default function OrderForm({
   }
 
   function removePayment(id: string) {
-    setPayments(payments.filter((payment) => payment.id !== id));
+    const updatedPayments = payments.filter((payment) => payment.id !== id);
+    setPayments(updatedPayments);
+
+    const updatedBalance = getTotalOrdered(items) - getTotalPaid(updatedPayments);
+    setOrderStatus((prevStatus) => syncOrderStatus(updatedBalance, prevStatus));
   }
 
-  function handleSubmit(e: React.FormEvent) {
+  function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
     if (!customerId) {
@@ -144,7 +176,7 @@ export default function OrderForm({
     }
 
     const orderData: Order = {
-      id: initialData?.id ?? Math.random().toString(36).substr(2, 9),
+      id: initialData?.id ?? Math.random().toString(36).slice(2, 11),
       customerId,
       items,
       payments,
@@ -187,7 +219,7 @@ export default function OrderForm({
 
   const totalOrdered = items.reduce((sum, item) => sum + item.quantity * item.price, 0);
   const totalPaid = payments.reduce((sum, payment) => sum + payment.amount, 0);
-
+  const balance = totalOrdered - totalPaid;
   return (
     <form
       onSubmit={handleSubmit}

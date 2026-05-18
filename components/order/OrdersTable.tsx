@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { DataTable } from "@/components/table/DataTable";
 import type { Order } from "@/types/order";
+import { statusStyles } from "@/lib/entityStyles";
 
 type Props = {
   orders: Order[];
@@ -18,15 +19,30 @@ export default function OrdersTable({ orders, customerMap }: Props) {
       emptyMessage="No hay órdenes."
       onRowClick={(order) => router.push(`/orders/${order.id}/edit`)}
       columns={[
-        { header: "Cliente", render: (order) => customerMap[order.customerId] ?? "-" },
-        { header: "Estado", render: (order) => order.orderStatus },
+        {
+          header: "Cliente",
+          render: (order) => customerMap[order.customerId] ?? "-",
+        },
+        {
+          header: "Estado",
+          render: (order) => {
+            return (
+              <span
+                className={`px-2 py-1 rounded text-xs font-medium ${statusStyles[order.orderStatus]}`}
+              >
+                {order.orderStatus}
+              </span>
+            );
+          },
+        },
         { header: "Items", render: (order) => order.items.length },
         {
           header: "Total",
           render: (order) =>
-            `$${order.items
-              .reduce((sum, item) => sum + item.quantity * item.price, 0)
-              .toFixed(2)}`,
+            `$${order.items.reduce(
+              (sum, item) => sum + item.quantity * item.price,
+              0,
+            )}`,
         },
         {
           header: "Pagado",
