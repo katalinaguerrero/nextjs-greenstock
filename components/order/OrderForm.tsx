@@ -6,6 +6,7 @@ import type { Order, OrderStatus, OrderItem, Payment, PaymentMethod } from "@/ty
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import Select from "../ui/Select";
+import CustomerModal from "./CustomerModal";
 
 type Props = {
   customers?: { label: string; value: string }[];
@@ -186,7 +187,7 @@ export default function OrderForm({
 
   const totalOrdered = items.reduce((sum, item) => sum + item.quantity * item.price, 0);
   const totalPaid = payments.reduce((sum, payment) => sum + payment.amount, 0);
-console.log(plants)
+
   return (
     <form
       onSubmit={handleSubmit}
@@ -245,47 +246,13 @@ console.log(plants)
         </div>
       </div>
 
-      {isCustomerModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-xl">
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <h2 className="text-xl font-semibold">Detalle del cliente</h2>
-                <p className="text-sm text-gray-600">ID: {customerId}</p>
-              </div>
-              <button
-                type="button"
-                onClick={closeCustomerModal}
-                className="text-sm text-gray-700 hover:text-black"
-              >
-                Cerrar
-              </button>
-            </div>
-
-            <div className="mt-4 space-y-3 text-sm text-gray-700">
-              <p className="font-semibold">Nombre</p>
-              <p>{customers.find((customer) => customer.value === customerId)?.label || "Cliente desconocido"}</p>
-            </div>
-
-            <div className="mt-6 flex flex-col gap-2 sm:flex-row">
-              <button
-                type="button"
-                onClick={() => window.open(`/customers/${customerId}/edit`, "_blank")}
-                className="rounded bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
-              >
-                Editar cliente en nueva pestaña
-              </button>
-              <button
-                type="button"
-                onClick={closeCustomerModal}
-                className="rounded border border-black bg-white px-4 py-2 text-sm font-semibold"
-              >
-                Volver a la orden
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <CustomerModal
+        open={isCustomerModalOpen}
+        customerId={customerId}
+        customerLabel={customers.find((customer) => customer.value === customerId)?.label}
+        editHref={`/customers/${customerId}/edit`}
+        onClose={closeCustomerModal}
+      />
 
       {/* ORDER ITEMS SECTION */}
       <div className="border-b pb-4">
@@ -308,9 +275,9 @@ console.log(plants)
                   <tr key={item.id} className="border-t">
                     <td className="px-4 py-2">{plantLabel(item.plantId)}</td>
                     <td className="px-4 py-2">{item.quantity}</td>
-                    <td className="px-4 py-2">${item.price.toFixed(2)}</td>
+                    <td className="px-4 py-2">${item.price}</td>
                     <td className="px-4 py-2 font-semibold">
-                      ${(item.quantity * item.price).toFixed(2)}
+                      ${(item.quantity * item.price)}
                     </td>
                     <td className="px-4 py-2 text-center">
                       <button
@@ -327,7 +294,7 @@ console.log(plants)
                   <td colSpan={3} className="px-4 py-2 text-right">
                     Total:
                   </td>
-                  <td className="px-4 py-2">${totalOrdered.toFixed(2)}</td>
+                  <td className="px-4 py-2">${totalOrdered}</td>
                   <td></td>
                 </tr>
               </tbody>
@@ -365,7 +332,7 @@ console.log(plants)
           </div>
           {selectedPlant?.price != null ? (
             <p className="text-xs text-gray-600">
-              Precio sugerido: ${selectedPlant.price.toFixed(2)} — puedes usar otro precio si lo deseas.
+              Precio sugerido: ${selectedPlant.price} — puedes usar otro precio si lo deseas.
             </p>
           ) : (
             <p className="text-xs text-gray-600">
@@ -402,7 +369,7 @@ console.log(plants)
                 {payments.map((payment) => (
                   <tr key={payment.id} className="border-t">
                     <td className="px-4 py-2 font-semibold">
-                      ${payment.amount.toFixed(2)}
+                      ${payment.amount}
                     </td>
                     <td className="px-4 py-2">{payment.method}</td>
                     <td className="px-4 py-2">{payment.paidAt}</td>
@@ -419,9 +386,9 @@ console.log(plants)
                   </tr>
                 ))}
                 <tr className="border-t bg-gray-50 font-semibold">
-                  <td className="px-4 py-2">${totalPaid.toFixed(2)}</td>
+                  <td className="px-4 py-2">${totalPaid}</td>
                   <td colSpan={3} className="px-4 py-2 text-right">
-                    Balance pendiente: ${(totalOrdered - totalPaid).toFixed(2)}
+                    Balance pendiente: ${(totalOrdered - totalPaid)}
                   </td>
                   <td></td>
                 </tr>

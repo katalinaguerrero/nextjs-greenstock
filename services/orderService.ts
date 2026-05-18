@@ -29,7 +29,7 @@ export const orderService = {
         type: "OUT",
         quantity: item.quantity,
         orderId: ref.id,
-        sectionId: ""
+        sectionId: "",
       });
     }
 
@@ -38,18 +38,42 @@ export const orderService = {
 
   // GET ONE
   async getOrder(orderId: string): Promise<Order | null> {
-    const snap = await adminDb.collection("orders").doc(orderId).get();
+  const snap = await adminDb.collection("orders").doc(orderId).get();
 
-    if (!snap.exists) return null;
+  const data = snap.data();
+  if (!snap.exists || !data) return null;
 
-    return snap.data() as Order;
-  },
-
+  return {
+    ...data,
+    id: snap.id,
+    createdAt: data.createdAt?.toDate?.(),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    payments: (data.payments ?? []).map((p: any) => ({
+      ...p,
+      paidAt: p.paidAt?.toDate?.() ?? null,
+      createdAt: p.createdAt?.toDate?.() ?? null,
+    })),
+  } as Order;
+},
   // GET ALL
   async getOrders(): Promise<Order[]> {
     const snap = await adminDb.collection("orders").get();
 
-    return snap.docs.map((d) => d.data() as Order);
+    return snap.docs.map((doc) => {
+      const data = doc.data();
+
+      return {
+        ...data,
+        id: doc.id,
+        createdAt: data.createdAt.toDate(),
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        payments: (data.payments ?? []).map((p: any) => ({
+          ...p,
+          paidAt: p.paidAt?.toDate?.() ?? null,
+          createdAt: p.createdAt?.toDate?.() ?? null,
+        })),
+      } as Order;
+    });
   },
 
   // UPDATE PARTIAL ORDER
@@ -71,15 +95,9 @@ export const orderService = {
 
   // RECOMPUTE STATUS FROM PAYMENTS
   async recalcStatus(order: Order): Promise<OrderStatus> {
-    const totalPaid = order.payments.reduce(
-      (sum, p) => sum + p.amount,
-      0
-    );
+    const totalPaid = order.payments.reduce((sum, p) => sum + p.amount, 0);
 
-    const total = order.items.reduce(
-      (sum, i) => sum + i.price * i.quantity,
-      0
-    );
+    const total = order.items.reduce((sum, i) => sum + i.price * i.quantity, 0);
 
     if (totalPaid >= total) return "PAGADA";
 
