@@ -57,7 +57,7 @@ export const orderService = {
 },
   // GET ALL
   async getOrders(): Promise<Order[]> {
-    const snap = await adminDb.collection("orders").get();
+    const snap = await adminDb.collection("orders").orderBy("createdAt","desc").get();
 
     return snap.docs.map((doc) => {
       const data = doc.data();
